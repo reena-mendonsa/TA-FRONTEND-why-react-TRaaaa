@@ -13,6 +13,29 @@ input.addEventListener('keyup', (event) => {
     event.target.value = '';
   }
 });
+function elm(type, attr = {}, ...children) {
+  let element = document.createElement(type);
+  for (let key in attr) {
+    if (key.startsWith('data-')) {
+      element.setAttribute(key, attr[key]);
+    } else if (key.startsWith('on')) {
+      let eventType = key.replace('on', '').toLowerCase();
+      element.addEventListener(eventType, attr[key]);
+    } else {
+      element[key] = attr[key];
+    }
+  }
+  children.forEach((child) => {
+    if (typeof child === 'object') {
+      element.append(child);
+    }
+    if (typeof child === 'string') {
+      let node = document.createTextNode(child);
+      element.append(node);
+    }
+  });
+  return element;
+}
 function deleteItems(event) {
   let id = event.target.dataset.id;
   allMovies.splice(id, 1);
@@ -23,26 +46,26 @@ function handleChange(event) {
   allMovies[id].watched = !allMovies[id].watched;
   createMovieUI();
 }
-function createMovieUI() {
+function createMovieUI(data = allMovies) {
   rootElm.innerText = '';
-  allMovies.forEach((movie, i) => {
-      let li = elm("li" ,{},
-              elm("label",{},movie.name),
-              elm("button",{id:i,onClick:handleChange},movie.watched ? 'Watched' : 'To Watch'),
-              elm())
-    // let li = document.createElement('li');
-    // let label = document.createElement('label');
-    // label.innerText = movie.name;
-    // let button = document.createElement('button');
-    // button.innerText = movie.watched ? 'Watched' : 'To Watch';
-    // button.style.fontSize ="18px";
-    // button.style.marginLeft= "2rem";
-
-    // button.id = i;
-    // button.addEventListener('click', handleChange);
-    // li.append(label, button);
+  data.forEach((movie, i) => {
+    let li = elm(
+      'li',
+      {},
+      elm('label', { for: i }, movie.name),
+      elm(
+        'button',
+        {
+          id: i,
+          onClick: handleChange,
+        },
+        movie.watched ? 'Watched' : 'To Watch'
+      )
+    );
     rootElm.append(li);
+
     input.innerHTML = '';
   });
 }
+
 createMovieUI();
