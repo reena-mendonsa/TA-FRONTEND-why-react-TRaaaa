@@ -1,0 +1,14 @@
+.some {
+  width: 150px;
+  height: 150px;
+  margin: 0 10px;
+}
+.flex {
+  display: flex;
+}
+.flex-column {
+  flex-direction: column;
+}
+.number {
+  margin-left: 80px;
+}
